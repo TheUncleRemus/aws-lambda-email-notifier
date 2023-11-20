@@ -4,8 +4,8 @@
             Ciao {{ context.user.username }},
         </p>
         <p>
-            L'ultima volta che hai cambiato la tua password è stata il: {{ context.user.last_changed }}, per ragioni di </br>
-            sicurezza ti invitiamo a cambiarla perché è scaduta da {{ context.user.expired_days }} giorni.
+            L'ultima volta che hai cambiato la tua password è stato il: {{ context.user.last_changed }}, per ragioni di </br>
+            sicurezza ti invitiamo a cambiarla perché è più vecchia di {{ context.user.expired_days }} giorni.
         </p>
     </body>
 </html>
