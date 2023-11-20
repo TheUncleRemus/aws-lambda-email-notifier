@@ -1,16 +1,13 @@
+import os
+
 from src.notifier.emailsender.template import StonTemplate
+from aws_lambda_powertools import Logger
 import datetime
-import logging
 import re
 
-logger = logging.getLogger('ses-notifier')
+logger = Logger()
 
 email_validator = "([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+"
-
-
-def logger_error_builder(e):
-    kwargs = e.kwargs
-    return kwargs.get('msg') if kwargs is not None else e.fmt
 
 
 def body_template_builder():
@@ -19,7 +16,7 @@ def body_template_builder():
 
     :return:
     """
-    template = StonTemplate("../../resources")
+    template = StonTemplate()
     return template.get_template("body_template.html") if template else None
 
 
@@ -29,7 +26,7 @@ def subject_template_builder():
 
         :return:
         """
-    template = StonTemplate("../../resources")
+    template = StonTemplate()
     return template.get_template("subject_template.html") if template else None
 
 
@@ -61,7 +58,8 @@ def ses_request_builder(user: dict, ses) -> None:
     subject_data = subject_template.render(context=context)
     subject = {'Data': subject_data, 'Charset': 'utf-8'}
     body = {'Html': {'Data': body_data, 'Charset': 'utf-8'}}
-    ses.send_email(Source="noreply@noreply.com", Destination={'ToAddresses': [context.get('user').get('email')]},
+    logger.info(f"Sending email ... to: {str(context.get('user').get('email'))}")
+    ses.send_email(Source=os.getenv('EMAIL_FROM', 'noreply@noreply.com'), Destination={'ToAddresses': [context.get('user').get('email')]},
                        Message={'Subject': subject, 'Body': body})
 
 
@@ -100,4 +98,23 @@ def users_builder(credential, iam) -> list:
                                 'email': email
                             }})
                             break
+                        else:
+                            logger.info(
+                                f"For user {user_info[0]} there isn't configured email tag or email value is not valid")
+    logger.info(f"The users to wakeup are: {''.join(map(str, wake_up_users))}")
     return wake_up_users
+
+
+def report_generator(iam):
+    """
+    To get credentials report, it must be exists before.
+
+    :param iam:
+    :return:
+    """
+    try:
+        res = iam.generate_credential_report()
+        return res.get('State')
+    except Exception as e:
+        raise e
+
