@@ -16,7 +16,6 @@ class LambdaTest(unittest.TestCase):
 
     __profile = os.getenv('AWS_PROFILE', 'default')
 
-
     def __session(self):
         """
         Dummy the session
@@ -53,10 +52,10 @@ class LambdaTest(unittest.TestCase):
         :return:
         """
         iam = self.__iam()
-        iam.generate_credential_report()
+        res = iam.generate_credential_report()
         report = iam.get_credential_report()
         report = report.get('Content')
-        self.assertIsNotNone(obj=report)
+        self.assertIsNotNone(obj=report) and self.assertEquals('COMPLETE' == res.get('Status'))
 
     def test_user_credentials(self):
         """
