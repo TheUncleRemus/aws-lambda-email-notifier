@@ -11,8 +11,9 @@ This is a lambda function useful to sends an email to all AWS users that has exp
   * [environment variables](#environment-variables)
   * [serverless framework](#serverless-framework)
     * [plugins](#plugins)
-      * [how to install the plugins](#how-to-install-the-plugins)
+      * [howto install the plugins](#howto-install-the-plugins)
   * [test](#test)
+  * [howto deploy with serverless](#howto-deploy-with-serverless)
 <!-- TOC -->
 
 ## project layout
@@ -65,7 +66,7 @@ The serverless plugin installed are:
 The first plugin is useful to install python requirements. The second one is useful to use aws local $HOME/.aws/_config_
 file instead of local .aws/_credentials_.
 
-#### how to install the plugins
+#### howto install the plugins
 
 ```bash
 serverless plugin install -n serverless-python-requirements
@@ -77,4 +78,21 @@ serverless plugin install -n serverless-better-credentials
 ## test
 
 Under the `test` package you can find some "unittest", but if you want to run these tests you need to configure the environment
-variable `AWS_PROFILE`, because the test calls the aws apis (like an "integration" test).   
+variable `AWS_PROFILE`, because the test calls the aws apis (like an "integration" test).
+
+## howto deploy with serverless
+
+First of all you can install serverless framework. To do this you can reach the serverless documentation from 
+[serverless framework](#serverless-framework).
+
+```shell
+git clone https://github.com/TheUncleRemus/aws-lambda-email-notifier.git
+```
+
+```shell
+cd aws-lambda-email-notifier/
+```
+
+```shell
+serverless deploy
+```
