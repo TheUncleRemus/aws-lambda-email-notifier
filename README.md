@@ -1,16 +1,21 @@
-<!-- TOC -->
-* [aws-lambda-email-notifier](#aws-lambda-email-notifier)
-  * [layout](#layout)
-  * [environment variables](#environment-variables)
-  * [serverless](#serverless)
-    * [plugins](#plugins)
-<!-- TOC -->
-
 # aws-lambda-email-notifier
 
 This is a lambda function useful to sends an email to all AWS users that has expired the password.
 
-## layout
+## ToC
+
+<!-- TOC -->
+* [aws-lambda-email-notifier](#aws-lambda-email-notifier)
+  * [ToC](#toc)
+  * [project layout](#project-layout)
+  * [environment variables](#environment-variables)
+  * [serverless framework](#serverless-framework)
+    * [plugins](#plugins)
+      * [how to install the plugins](#how-to-install-the-plugins)
+  * [test](#test)
+<!-- TOC -->
+
+## project layout
 The project structure is based on a canonical _src layout_ with pyproject.tml as file 
 descriptor to indicate the build subsystem and pre requirements useful to python _build_
 module.
@@ -30,7 +35,7 @@ The lambda use the `aws_lambda_powertools`, and then the project needs of the be
 |LOG_LEVEL                  |True                 |bool|useful to configure the basic logger     |
 |OLD_AGE_PASSWORD           |75                   |int |useful to set a old age of password      |
 
-## serverless
+## serverless framework
 
 [Serverless](https://www.serverless.com/) is a framework useful to configure, pack and deploy AWS lambda function.
 This project use this framework.
@@ -60,7 +65,7 @@ The serverless plugin installed are:
 The first plugin is useful to install python requirements. The second one is useful to use aws local $HOME/.aws/_config_
 file instead of local .aws/_credentials_.
 
-#### How to install the plugins
+#### how to install the plugins
 
 ```bash
 serverless plugin install -n serverless-python-requirements
@@ -69,3 +74,7 @@ serverless plugin install -n serverless-python-requirements
 ```bash
 serverless plugin install -n serverless-better-credentials
 ```
+## test
+
+Under the `test` package you can find some "unittest", but if you want to run these tests you need to configure the environment
+variable `AWS_PROFILE`, because the test calls the aws apis (like an "integration" test).   
