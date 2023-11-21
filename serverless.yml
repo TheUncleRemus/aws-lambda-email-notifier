@@ -1,21 +1,40 @@
-service: e0-py-lambda-ses-notifier
+service: lambda-ses-notifier
 frameworkVersion: "3"
 
 provider:
   name: aws
-  stage: poc
-  region: eu-west-1
+  profile: <your-profile-key>
+  region: <your-region-code>
   deploymentPrefix: lambda-ses-notifier
   memorySize: 256
   timeout: 60
   versionFunctions: false
   tracing:
     lambda: true
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'ses:CreateTemplate'
+            - 'ses:ListTemplates'
+            - 'ses:SendEmail'
+            - 'ses:SendRawEmail'
+          Resource: [ '*' ]
+        - Effect: Allow
+          Action:
+            - 'iam:GenerateCredentialReport'
+            - 'iam:GetCredentialReport'
+            - 'iam:ListUserTags'
+          Resource: [ '*' ]
+        - Effect: 'Allow'
+          Action:
+            - 'sts:AssumeRole'
+          Resource: [ "*" ]
 
 custom:
   pythonRequirements:
     layer:
-      name: e0-py-lambda-ses-notifier
       description: "Layer which contains the python libraries"
       compatibleRuntimes:
         - python3.11
@@ -24,14 +43,17 @@ custom:
         - x86_64
 
 functions:
-  # the permission statement is not mandatory in this case because has been configured using terraform project.
   ses-notifier:
     handler: src.notifier.notifier.handler
-    runtime: python3.10
+    runtime: python3.11
     description: This function provides a mechanism to notify the aws users (with password enabled) when their password is expired
     environment:
-      POWERTOOLS_SERVICE_NAME: e0-py-lambda-ses-notifier
-      LOG_LEVEL: info
+      POWERTOOLS_SERVICE_NAME: lambda-ses-notifier
+      LOG_LEVEL: INFO
+      POWERTOOLS_LOGGER_LOG_EVENT: True
+      POWERTOOLS_LOG_LEVEL: INFO
+      EMAIL_FROM: <youremail@yourdomain.com>
+      OLD_AGE_PASSWORD: 75
     logRetentionInDays: 5
     events:
       - schedule:

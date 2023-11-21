@@ -82,7 +82,7 @@ def users_builder(credential, iam) -> list:
                 password_age = datetime.datetime.now() - password_last_changed.replace(tzinfo=None)
             except ValueError:
                 logger.info(f"The current user {user_info[0]} has not password enabled")
-            if 'true' == user_info[3] and password_age.days >= 90:
+            if 'true' == user_info[3] and password_age.days >= int(os.getenv("OLD_AGE_PASSWORD", 75)):
                 response = iam.list_user_tags(UserName=user_info[0])
                 tags: dict = response.get('Tags')
                 if len(tags) > 0:
