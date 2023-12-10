@@ -55,7 +55,7 @@ class LambdaTest(unittest.TestCase):
         res = iam.generate_credential_report()
         report = iam.get_credential_report()
         report = report.get('Content')
-        self.assertIsNotNone(obj=report) and self.assertEquals('COMPLETE' == res.get('Status'))
+        self.assertIsNotNone(obj=report) and self.assertTrue(expr='COMPLETE' == res.get('Status'))
 
     def test_user_credentials(self):
         """
@@ -71,7 +71,8 @@ class LambdaTest(unittest.TestCase):
                 if 'true' == info[3]:
                     wake_up_users.append({info[0]: {
                         'username': info[0],
-                        'password_last_changed': info[5]
+                        'password_last_changed': info[5],
+                        'account': str(info[1]).split(":")[4]
                     }})
         self.assertTrue(expr=len(wake_up_users) == 13)
 
@@ -114,7 +115,7 @@ class LambdaTest(unittest.TestCase):
         [proposition.append(member_to_check.keys() <= user.keys()) for user in users]
         return any(proposition)
 
-    @unittest.skip('S1607: strictly depends on the business AWS account')
+    @unittest.skip('S1607 - <test_tagged_email_for_users> strictly depends on the business AWS account')
     def test_tagged_email_for_users(self):
         """
         This method test if the users are tagged with email.
@@ -160,7 +161,8 @@ class LambdaTest(unittest.TestCase):
                     "username": k,
                     "expired_days": v.get('password_days_age'),
                     "last_changed": v.get('password_last_changed'),
-                    "password_days_age": v.get('password_days_age')
+                    "password_days_age": v.get('password_days_age'),
+                    "account": v.get("account")
                 },
                 "email": {
                     "subject": f"{k} la tua password è scaduta!"
@@ -172,7 +174,6 @@ class LambdaTest(unittest.TestCase):
         body = {'Html': {'Data': body_data, 'Charset': 'utf-8'}}    #TODO: use also in assert condition
         with open("../resources/mock/email_body_template_result_ok.html") as f:
             self.assertEqual(body_data, f.read())
-
 
 
 if __name__ == '__main__':

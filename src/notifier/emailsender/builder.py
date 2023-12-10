@@ -48,7 +48,8 @@ def ses_request_builder(user: dict, ses) -> None:
                 "expired_days": v.get('password_days_age'),
                 "last_changed": v.get('password_last_changed'),
                 "password_days_age": v.get('password_days_age'),
-                "email": v.get('email')
+                "email": v.get('email'),
+                "account": v.get('account')
             },
             "email": {
                 "subject": f"{k} la tua password è scaduta!"
@@ -95,7 +96,8 @@ def users_builder(credential, iam) -> list:
                                 'username': user_info[0],
                                 'password_last_changed': user_info[5],
                                 'password_days_age': password_age.days,
-                                'email': email
+                                'email': email,
+                                'account': str(user_info[1]).split(":")[4]
                             }})
                             break
                         else:
