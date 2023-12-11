@@ -109,14 +109,10 @@ def users_builder(credential, iam) -> list:
 
 def report_generator(iam):
     """
-    To get credentials report, it must be exists before.
+    To get credentials report, it must exist before.
 
     :param iam:
     :return:
     """
-    try:
-        res = iam.generate_credential_report()
-        return res.get('State')
-    except Exception as e:
-        raise e
-
+    res = iam.generate_credential_report()
+    return res.get('State')
